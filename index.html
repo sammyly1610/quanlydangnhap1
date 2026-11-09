@@ -3,157 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Trung tâm - Extra Center</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              800: '#065f46',
-            },
-            tealAccent: {
-              500: '#0d9488',
-              600: '#0f766e',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <title>Cổng Đăng Nhập - Extra English</title>
+  <!-- Google Identity Services Library -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .auth-card {
+      background: #ffffff;
+      padding: 40px 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .logo-badge {
+      width: 56px;
+      height: 56px;
+      background-color: #eff6ff;
+      color: #2563eb;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+    p.desc {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 28px;
+    }
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+      min-height: 44px;
+    }
+    #status-box {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .status-loading {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      display: block !important;
+    }
+    .status-success {
+      background-color: #f0fdf4;
+      color: #15803d;
+      display: block !important;
+    }
+    .status-error {
+      background-color: #fef2f2;
+      color: #b91c1c;
+      display: block !important;
+    }
+    .user-profile {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .user-profile img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .user-profile h4 {
+      color: #1e293b;
+      font-size: 1.1rem;
+    }
+    .user-profile p {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
+<body>
 
-  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
-  <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+  <div class="auth-card">
+    <div class="logo-badge">E</div>
+    <h2>Đăng Nhập</h2>
+    <p class="desc">Vui lòng đăng nhập bằng tài khoản Google để tiếp tục</p>
 
-  <!-- ==================== LOGIN SCREEN ==================== -->
-  <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-teal-50/70 to-slate-100 overflow-y-auto">
-    <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 sm:p-10 w-full max-w-[420px] shadow-2xl shadow-emerald-500/10 border border-emerald-100/60 flex flex-col items-center">
-      
-      <!-- Graduation Cap Icon -->
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-lg shadow-teal-500/30 mb-5">
-        <i class="fa-solid fa-graduation-cap text-3xl"></i>
+    <!-- Google Button -->
+    <div id="signin-controls">
+      <!-- THAY CLIENT ID ĐẦY ĐỦ CỦA BẠN VÀO data-client_id BÊN DƯỚI -->
+      <div id="g_id_onload"
+           data-client_id="364119049323-rjha................apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
       </div>
-
-      <!-- Heading -->
-      <h1 class="text-2xl sm:text-[26px] font-extrabold text-slate-800 tracking-tight text-center">Quản lý Trung tâm</h1>
-      <p class="text-xs sm:text-sm text-slate-400 mt-1 mb-8 text-center font-medium">Đăng nhập để tiếp tục</p>
-
-      <!-- Login Form -->
-      <form id="loginForm" onsubmit="handleLogin(event)" class="w-full space-y-5">
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">Email</label>
-          <div class="relative">
-            <input 
-              type="text" 
-              id="loginEmail" 
-              required
-              placeholder="giao_vien@email.com" 
-              class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition font-medium"
-            >
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wider">PIN</label>
-          <div class="relative">
-            <input 
-              type="password" 
-              id="loginPin" 
-              required
-              placeholder="Nhập PIN của bạn" 
-              class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition font-medium tracking-widest"
-            >
-          </div>
-        </div>
-
-        <button 
-          type="submit" 
-          id="btnLoginSubmit"
-          class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-[0.99] transition-all flex items-center justify-center gap-2 mt-2"
-        >
-          <span>🔐</span>
-          <span>Đăng nhập</span>
-        </button>
-      </form>
-
-      <!-- Quick Mock Test Accounts Helper -->
-      <div class="w-full mt-6 pt-5 border-t border-slate-100">
-        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-center mb-2.5">Tài khoản mẫu thử nhanh</p>
-        <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="fillTestAccount('admin@extra.edu.vn', '1234')" class="p-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 text-left transition group">
-            <div class="text-[11px] font-bold text-slate-700 group-hover:text-emerald-700">Admin</div>
-            <div class="text-[10px] text-slate-400 font-mono">PIN: 1234</div>
-          </button>
-          <button type="button" onclick="fillTestAccount('giaovien@extra.edu.vn', '5678')" class="p-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 text-left transition group">
-            <div class="text-[11px] font-bold text-slate-700 group-hover:text-emerald-700">Giáo viên</div>
-            <div class="text-[10px] text-slate-400 font-mono">PIN: 5678</div>
-          </button>
+      <div class="btn-container">
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
         </div>
       </div>
-
     </div>
+
+    <!-- Thông tin sau khi đăng nhập thành công -->
+    <div id="user-info" class="user-profile">
+      <img id="user-avatar" src="" alt="Avatar">
+      <h4 id="user-name"></h4>
+      <p id="user-email"></p>
+    </div>
+
+    <!-- Trạng thái xử lý -->
+    <div id="status-box"></div>
   </div>
 
-  <!-- ==================== MAIN DASHBOARD CONTAINER ==================== -->
-  <div id="mainApp" class="hidden min-h-screen flex flex-col md:flex-row">
-    <!-- Sidebar -->
-    <aside class="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
-      <div class="h-16 flex items-center justify-between px-6 border-b border-slate-100">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-            <i class="fa-solid fa-graduation-cap text-lg"></i>
-          </div>
-          <div>
-            <h1 class="font-bold text-slate-900 leading-tight">Extra Center</h1>
-            <p class="text-[10px] text-emerald-600 font-bold tracking-wider">HỆ THỐNG QUẢN LÝ</p>
-          </div>
-        </div>
-        <button id="mobileMenuBtn" class="md:hidden text-slate-500 hover:text-slate-700 p-2">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
-      </div>
+  <script>
+    // Link Apps Script của bạn
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyXaRJ1nOiF6RKc1z_j3sJMruAsMqhI99sHcEaG1FPN6MPywJYqzejUDhbCznPBBdbP/exec";
 
-      <!-- Navigation Menu -->
-      <nav id="navMenu" class="hidden md:flex flex-col gap-1 p-4 flex-1">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all text-emerald-700 bg-emerald-50">
-          <i class="fa-solid fa-chart-pie w-5 text-center"></i>
-          <span>Tổng quan</span>
-        </button>
+    // Hàm giải mã JWT Token từ Google
+    function decodeJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("Lỗi giải mã Token:", e);
+        return null;
+      }
+    }
 
-        <button onclick="switchTab('students')" id="nav-students" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
-          <i class="fa-solid fa-user-graduate w-5 text-center"></i>
-          <span>Danh sách học sinh</span>
-        </button>
+    // Xử lý sau khi người dùng chọn tài khoản Google
+    async function handleCredentialResponse(response) {
+      const statusBox = document.getElementById("status-box");
+      const signinControls = document.getElementById("signin-controls");
+      const userInfo = document.getElementById("user-info");
+      const userAvatar = document.getElementById("user-avatar");
+      const userName = document.getElementById("user-name");
+      const userEmail = document.getElementById("user-email");
 
-        <button onclick="switchTab('attendance')" id="nav-attendance" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
-          <i class="fa-solid fa-calendar-check w-5 text-center"></i>
-          <span>Điểm danh lớp</span>
-        </button>
+      statusBox.className = "status-loading";
+      statusBox.innerText = "Đang xác thực và ghi nhận dữ liệu...";
 
-        <button onclick="switchTab('scores')" id="nav-scores" class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+      const payload = decodeJwt(response.credential);
+
+      if (!payload) {
+        statusBox.className = "status-error";
+        statusBox.innerText = "Lỗi xác thực danh tính.";
+        return;
+      }
+
+      // Ẩn nút đăng nhập, hiển thị thông tin tạm
+      signinControls.style.display = "none";
+      userAvatar.src = payload.picture || "";
+      userName.innerText = payload.name || "Người dùng";
+      userEmail.innerText = payload.email || "";
+      userInfo.style.display = "block";
+
+      const payloadToSend = {
+        name: payload.name || "",
+        email: payload.email || "",
+        sub: payload.sub || ""
+      };
+
+      try {
+        // Gửi thông tin sang Google Sheet qua Google Apps Script
+        await fetch(GAS_WEBAPP_URL, {
