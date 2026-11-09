@@ -199,3 +199,22 @@
       try {
         // Gửi thông tin sang Google Sheet qua Google Apps Script
         await fetch(GAS_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payloadToSend)
+        });
+
+        statusBox.className = "status-success";
+        statusBox.innerText = "Đăng nhập thành công! Đã lưu nhật ký vào Google Sheets.";
+      } catch (err) {
+        console.error("Lỗi gửi dữ liệu:", err);
+        statusBox.className = "status-error";
+        statusBox.innerText = "Đăng nhập được nhưng gặp lỗi khi lưu vào Google Sheets.";
+      }
+    }
+  </script>
+</body>
+</html>
