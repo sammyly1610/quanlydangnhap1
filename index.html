@@ -94,4 +94,126 @@
       height: 64px;
       border-radius: 50%;
       margin-bottom: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .user-profile h4 {
+      color: #1e293b;
+      font-size: 1.1rem;
+    }
+    .user-profile p {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card">
+    <div class="logo-badge">E</div>
+    <h2>Đăng Nhập</h2>
+    <p class="desc">Vui lòng đăng nhập bằng tài khoản Google để tiếp tục</p>
+
+    <!-- Google Button -->
+    <div id="signin-controls">
+      <div id="g_id_onload"
+           data-client_id="364119049323-rjhas2q5beglrkebe56ml61sbv63thli.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+      <div class="btn-container">
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+      </div>
+    </div>
+
+    <!-- Thông tin sau khi đăng nhập thành công -->
+    <div id="user-info" class="user-profile">
+      <img id="user-avatar" src="" alt="Avatar">
+      <h4 id="user-name"></h4>
+      <p id="user-email"></p>
+    </div>
+
+    <!-- Trạng thái xử lý -->
+    <div id="status-box"></div>
+  </div>
+
+  <script>
+    // Link Apps Script
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyXaRJ1nOiF6RKc1z_j3sJMruAsMqhI99sHcEaG1FPN6MPywJYqzejUDhbCznPBBdbP/exec";
+
+    // Hàm giải mã JWT Token từ Google
+    function decodeJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("Lỗi giải mã Token:", e);
+        return null;
+      }
+    }
+
+    // Xử lý sau khi người dùng chọn tài khoản Google
+    async function handleCredentialResponse(response) {
+      const statusBox = document.getElementById("status-box");
+      const signinControls = document.getElementById("signin-controls");
+      const userInfo = document.getElementById("user-info");
+      const userAvatar = document.getElementById("user-avatar");
+      const userName = document.getElementById("user-name");
+      const userEmail = document.getElementById("user-email");
+
+      statusBox.className = "status-loading";
+      statusBox.innerText = "Đang xác thực và ghi nhận dữ liệu...";
+
+      const payload = decodeJwt(response.credential);
+
+      if (!payload) {
+        statusBox.className = "status-error";
+        statusBox.innerText = "Lỗi xác thực danh tính.";
+        return;
+      }
+
+      // Ẩn nút đăng nhập, hiển thị thông tin tạm
+      signinControls.style.display = "none";
+      userAvatar.src = payload.picture || "";
+      userName.innerText = payload.name || "Người dùng";
+      userEmail.innerText = payload.email || "";
+      userInfo.style.display = "block";
+
+      const payloadToSend = {
+        name: payload.name || "",
+        email: payload.email || "",
+        sub: payload.sub || ""
+      };
+
+      try {
+        // Gửi thông tin sang Google Sheet qua Google Apps Script
+        await fetch(GAS_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payloadToSend)
+        });
+
+        statusBox.className = "status-success";
+        statusBox.innerText = "Đăng nhập thành công! Đã lưu nhật ký vào Google Sheets.";
+      } catch (err) {
+        console.error("Lỗi gửi dữ liệu:", err);
+        statusBox.className = "status-error";
+        statusBox.innerText = "Đăng nhập được nhưng gặp lỗi khi lưu vào Google Sheets.";
+      }
+    }
+  </script>
+</body>
+</html>
